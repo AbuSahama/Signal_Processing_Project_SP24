@@ -2,23 +2,23 @@
 
 **Signal Processing Project (SP24)**
 
-A Python-based application for generating and analyzing audio signals.
+A Python-based application for generating, visualizing, playing, recording, and analyzing audio signals.
 
 
 ## Objective
 
-The objective of this project is to develop an interactive application that generates and analyzes different audio signals. The application supports waveform generation, audio playback, recording, WAV file handling, FFT analysis, and STFT spectrogram visualization.
+This project aims to build an interactive application for generating and analyzing audio signals using Python.
 
 
 ## Features
 
 ### Signal Generator
 
-- Generate Sine Wave
-- Generate Square Wave
-- Generate Triangle Wave
-- Generate Chirp Signal
-- Generate Sinc Signal
+- Sine Wave
+- Square Wave
+- Triangle Wave
+- Chirp Signal
+- Sinc Signal
 
 ### Signal Controls
 
@@ -43,7 +43,7 @@ The objective of this project is to develop an interactive application that gene
 - STFT Spectrogram
 
 
-## Technologies Used
+## Technologies
 
 - Python
 - NumPy
@@ -64,7 +64,6 @@ The objective of this project is to develop an interactive application that gene
 git clone https://github.com/AbuSahama/Signal_Processing_Project_SP24.git
 ```
 
----
 
 ## 2. Navigate to the Project Directory
 
@@ -72,7 +71,6 @@ git clone https://github.com/AbuSahama/Signal_Processing_Project_SP24.git
 cd Signal_Processing_Project_SP24
 ```
 
----
 
 ## 3. Create a Virtual Environment
 
@@ -82,7 +80,6 @@ A virtual environment creates an isolated Python environment for this project so
 python3 -m venv .venv
 ```
 
----
 
 ## 4. Activate the Virtual Environment
 
@@ -98,7 +95,6 @@ source .venv/bin/activate
 .venv\Scripts\activate
 ```
 
----
 
 ## 5. Install Required Libraries
 
@@ -108,16 +104,7 @@ Install all required dependencies listed in `requirements.txt`.
 pip install -r requirements.txt
 ```
 
----
 
-## 6. Verify Installation (Optional)
-
-```bash
-python --version
-pip list
-```
-
----
 
 # Running the Project
 
@@ -127,7 +114,6 @@ Run the application using:
 python main.py
 ```
 
----
 
 # Project Structure
 
@@ -148,123 +134,10 @@ Signal_Processing_Project_SP24/
 └── .gitignore               # Files ignored by Git
 ```
 
----
 
-# File Description
-
-### main.py
-
-Starts the application and initializes all modules.
-
----
-
-### gui.py
-
-Contains the graphical user interface.
-
-Responsibilities:
-
-- User input
-- Buttons
-- Navigation
-- Display graphs
-- Connect all modules
-
----
-
-### signal_generator.py
-
-Responsible for generating different waveforms.
-
-Functions include:
-
-- Sine Wave
-- Square Wave
-- Triangle Wave
-- Chirp Signal
-- Sinc Signal
-
----
-
-### analyzer.py
-
-Performs signal analysis.
-
-Includes:
-
-- Fast Fourier Transform (FFT)
-- Short-Time Fourier Transform (STFT)
-
----
-
-### audio.py
-
-Handles all audio-related operations.
-
-Includes:
-
-- Audio Playback
-- Stop Playback
-- Audio Recording
-- Save WAV
-- Load WAV
-
----
-
-### utils.py
-
-Contains reusable helper functions used throughout the project.
-
-Examples:
-
-- Signal validation
-- Normalization
-- Utility calculations
-
----
-
-### generated/
-
-Stores all generated output files such as:
-
-- WAV files
-- FFT images
-- STFT images
-
----
-
-### requirements.txt
-
-Lists all Python packages required to run the project.
-
-Install them using:
-
-```bash
-pip install -r requirements.txt
-```
-
----
-
-### README.md
-
-Provides project documentation, setup instructions, usage guide, and team information.
-
----
-
-### .gitignore
-
-Prevents unnecessary files from being uploaded to GitHub.
-
-Examples:
-
-- `.venv/`
-- `__pycache__/`
-- `.DS_Store`
-- `*.pyc`
 
 ## Project Status
 
-🚧 Under Development
 
 Current Progress:
 
