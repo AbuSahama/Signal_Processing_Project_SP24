@@ -112,7 +112,9 @@ Run the application using:
 python main.py
 ```
 
+## Project Structure
 
+```text
 Signal_Processing_Project_SP24/
 │
 ├── main.py                  # Entry point of the application
@@ -128,6 +130,8 @@ Signal_Processing_Project_SP24/
 ├── requirements.txt         # Python dependencies
 ├── README.md                # Project documentation
 └── .gitignore               # Git ignored files
+```
+
 
 
 ## Project Status
