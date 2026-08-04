@@ -113,25 +113,21 @@ python main.py
 ```
 
 
-# Project Structure
-
-```
 Signal_Processing_Project_SP24/
 │
 ├── main.py                  # Entry point of the application
 ├── gui.py                   # Graphical User Interface
 ├── signal_generator.py      # Signal generation algorithms
 ├── analyzer.py              # FFT and STFT analysis
-├── audio.py                 # Audio playback, recording, WAV handling
+├── audio.py                 # Audio playback, recording, and WAV handling
 ├── utils.py                 # Helper functions
 │
+├── assets/                  # Icons, images, and logos
 ├── generated/               # Generated WAV files and exported graphs
 │
 ├── requirements.txt         # Python dependencies
 ├── README.md                # Project documentation
-└── .gitignore               # Files ignored by Git
-```
-
+└── .gitignore               # Git ignored files
 
 
 ## Project Status
