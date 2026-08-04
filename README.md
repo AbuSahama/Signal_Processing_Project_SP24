@@ -7,8 +7,7 @@ A Python-based application for generating, visualizing, playing, recording, and 
 
 ## Objective
 
-This project aims to build an interactive application for generating and analyzing audio signals using Python.
-
+This project aims to build an interactive Python application for generating, visualizing, and analyzing audio signals.
 
 ## Features
 
@@ -106,7 +105,6 @@ pip install -r requirements.txt
 
 
 
-# Running the Project
 
 Run the application using:
 
