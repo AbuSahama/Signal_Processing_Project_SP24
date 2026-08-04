@@ -133,18 +133,3 @@ Signal_Processing_Project_SP24/
 ```
 
 
-
-## Project Status
-
-
-Current Progress:
-
-- [x] Repository Created
-- [x] Project Structure Designed
-- [ ] Signal Generator
-- [ ] Audio Playback
-- [ ] WAV Handling
-- [ ] FFT Analysis
-- [ ] STFT Analysis
-- [ ] GUI Development
-- [ ] Testing
