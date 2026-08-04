@@ -105,13 +105,6 @@ pip install -r requirements.txt
 
 
 
-
-Run the application using:
-
-```bash
-python main.py
-```
-
 ## Project Structure
 
 ```text
