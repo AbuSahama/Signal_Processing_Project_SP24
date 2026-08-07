@@ -1,6 +1,7 @@
 import numpy as np
 import matplotlib.pyplot as plt
 from scipy import signal
+from audio import save_audio
 
 from signal_generator import (
     generate_sine,
@@ -106,3 +107,15 @@ plt.xlabel("Time (s)")
 plt.ylabel("Amplitude")
 plt.grid(True)
 plt.show()
+
+save = input("Save as WAV? (y/n): ").strip().lower()
+
+if save == "y":
+    filename = input("Enter filename: ").strip()
+
+    if not filename.endswith(".wav"):
+        filename += ".wav"
+
+    save_audio(filename, x, sample_rate)
+
+    print("Audio saved successfully!")
