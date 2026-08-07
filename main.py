@@ -40,64 +40,76 @@ sample_rate = int(input("Sampling Rate (Hz): "))
 t = np.arange(0, duration, 1 / sample_rate)
 
 if choice in ["1", "sine"]:
+    signal_name = "Sine Wave"
     freq = float(input("Frequency (Hz): "))
     phase_ = float(input("Phase Shift (degrees): "))
     x = generate_sine(t, freq, amp, phase_)
-    title = f"Sine Wave | f={freq} Hz | A={amp} | P={phase_}°"
+    title = f"{signal_name} | f={freq} Hz | A={amp} | Phase={phase_}°"
 
 elif choice in ["2", "cosine"]:
+    signal_name = "Cosine Wave"
     freq = float(input("Frequency (Hz): "))
     phase_ = float(input("Phase Shift (degrees): "))
     x = generate_cosine(t, freq, amp, phase_)
-    title = f"Cosine Wave | f={freq} Hz | A={amp} | P={phase_}°"
-
+    title = f"{signal_name} | f={freq} Hz | A={amp} | Phase={phase_}°"
+    
+    
 elif choice in ["3", "square"]:
+    signal_name = "Square Wave"
     freq = float(input("Frequency (Hz): "))
     duty_cycle = float(input("Duty Cycle (%): "))
     x = generate_square(t, freq, amp, duty_cycle)
-    title = f"Square Wave | f={freq} Hz | A={amp} | Duty={duty_cycle}%"
-
+    title = f"{signal_name} | f={freq} Hz | A={amp} | Duty={duty_cycle}%"
+    
 elif choice in ["4", "triangular"]:
+    signal_name = "Triangular Wave"
     freq = float(input("Frequency (Hz): "))
     x = generate_triangular(t, freq, amp)
-    title = f"Triangle Wave | f={freq} Hz | A={amp}"
+    title = f"{signal_name} | f={freq} Hz | A={amp}"
+        
+    
 
 elif choice in ["5", "sinc"]:
+    signal_name = "Sinc Wave"
     t = np.arange(-duration/2, duration/2, 1/sample_rate)
     freq = float(input("Frequency (Hz): "))
     x = generate_sinc(t, freq, amp)
-    title = f"Sinc Wave | f={freq} Hz | A={amp}"
-
+    title = f"{signal_name} | f={freq} Hz | A={amp}"
+        
+    
 elif choice in ["6", "chirp"]:
+    signal_name = "Chirp Wave"
     freq = float(input("Initial Frequency (Hz): "))
     f1 = float(input("Final Frequency (Hz): "))
     t1=duration
     x = generate_chirp(t, freq, t1, f1, amp)
-    title = (
-    f"Chirp Wave | f₀={freq} Hz | "
-    f"f₁={f1} Hz | T={t1}s | A={amp}"
-    )
-
-
+    title = f"{signal_name} | f0={freq} Hz | f1={f1} Hz | A={amp}"
+    
 else:
     print("Invalid choice!")
     sys.exit()
 
 
-              
+plt.plot(t,x, color="#054D21")
+plt.title(title, fontsize=15,
+                family="Arial",
+                color="#670255")
 
-plt.plot(t,x)
-plt.title(title)
-
-plt.xlabel("Time (s)")
-plt.ylabel("Amplitude")
+plt.xlabel("Time (s)", fontsize=10,
+                        family="Arial",
+                        fontweight="bold",
+                        color="#47A18C")
+plt.ylabel("Amplitude", fontsize=10,
+                        family="Arial",
+                        fontweight="bold",
+                        color="#47A18C")
 plt.grid(True)
 plt.show()
 
 save = input("Save as WAV? (y/n): ").strip().lower()
 
 if save == "y":
-    filename = input("Enter filename: ").strip()
+    filename = signal_name.lower().replace(" ", "_")
 
     if not filename.endswith(".wav"):
         filename += ".wav"
