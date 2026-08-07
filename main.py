@@ -1,7 +1,8 @@
 import numpy as np
 import matplotlib.pyplot as plt
-from scipy import signal
 from audio import save_audio
+import sys
+
 
 from signal_generator import (
     generate_sine,
@@ -80,25 +81,10 @@ elif choice in ["6", "chirp"]:
 
 else:
     print("Invalid choice!")
-    exit()
+    sys.exit()
 
 
-# for testing 
-# if __name__=="__main__":
-#     t, x = generate_sine(freq=float(input("Enter the frequency: ")),
-#                          amp=float(input("Enter the amplitude of the sine wave: ")),
-#                          duration=float(input("Enter the duration (in senconds): ")),
-#                          sample_rate=int(input("Enter the sampling rate (in Hz): "))
-#                          )
-
-# if __name__=="__main__":
-#     t, x = generate_square(freq=float(input("Enter the frequency: ")),
-#                          amp=float(input("Enter the amplitude of the sine wave: ")),
-#                          duration=float(input("Enter the duration (in senconds): ")),
-#                          sample_rate=int(input("Enter the sampling rate (in Hz): ")),
-#                          duty_cycle=float(input("Enter the duty cycle in percentage: "))
-#                          )
-    
+              
 
 plt.plot(t,x)
 plt.title(title)
@@ -118,4 +104,5 @@ if save == "y":
 
     save_audio(filename, x, sample_rate)
 
-    print("Audio saved successfully!")
+else:
+     print("Audio not saved.")
