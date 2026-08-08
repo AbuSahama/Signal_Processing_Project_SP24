@@ -102,8 +102,13 @@ plt.xlabel("Time (s)", fontsize=10,
 plt.ylabel("Amplitude", fontsize=10,
                         family="Arial",
                         fontweight="bold",
-                        color="#47A18C")
-plt.grid(True)
+                      color="#438C7A")
+plt.tick_params(axis="both",
+                colors="#1D2523")
+plt.grid(axis="y",
+         linewidth=2,
+         color="lightgray",
+         linestyle="dashed")
 plt.show()
 
 save = input("Save as WAV? (y/n): ").strip().lower()
