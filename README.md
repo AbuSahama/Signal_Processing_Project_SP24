@@ -117,8 +117,6 @@ Signal_Processing_Project_SP24/
 ├── audio.py                 # Audio playback, recording, and WAV handling
 ├── utils.py                 # Helper functions
 │
-├── assets/                  # Icons, images, and logos
-├── generated/               # Generated WAV files and exported graphs
 │
 ├── requirements.txt         # Python dependencies
 ├── README.md                # Project documentation
