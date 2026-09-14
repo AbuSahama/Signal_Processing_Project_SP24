@@ -2,7 +2,7 @@
 
 **Signal Processing Project (SP24)**
 
-A Python-based application for generating, visualizing, playing, recording, and analyzing audio signals.
+A Python-based application for generating, visualizing, playing, recording, and analyzing audio signals — built as an interactive web app with Streamlit.
 
 
 ## Objective
@@ -14,10 +14,12 @@ This project aims to build an interactive Python application for generating, vis
 ### Signal Generator
 
 - Sine Wave
+- Cosine Wave
 - Square Wave
 - Triangle Wave
-- Chirp Signal
 - Sinc Signal
+- Chirp Signal
+- Noise Signal
 
 ### Signal Controls
 
@@ -25,21 +27,27 @@ This project aims to build an interactive Python application for generating, vis
 - Adjustable Amplitude
 - Adjustable Sampling Rate
 - Adjustable Duration
+- Phase Shift (Sine / Cosine)
 - Duty Cycle (Square Wave)
 
 ### Audio
 
-- Play Signal
-- Stop Playback
-- Save WAV File
-- Load WAV File
-- Record Audio
+- Play Signal (in-browser)
+- Upload an existing `.wav` file to analyze instead of generating one
+- Record audio from the browser microphone
+- Export original and filtered signals as `.wav` or `.csv`
+
+### Filtering
+
+- Butterworth Low-Pass, High-Pass, and Band-Pass filters
+- Adjustable cutoff frequency/frequencies and filter order
+- Filter frequency-response (Bode-style) view
 
 ### Signal Analysis
 
-- Time Domain Waveform
-- FFT Spectrum
-- STFT Spectrogram
+- Time Domain Waveform (original vs. filtered)
+- FFT Spectrum (single-sided, with optional dB scale; two-sided view for Sinc)
+- STFT Spectrogram (side-by-side original/filtered comparison when a filter is active)
 
 
 ## Technologies
@@ -48,12 +56,13 @@ This project aims to build an interactive Python application for generating, vis
 - NumPy
 - SciPy
 - Matplotlib
-- PyQt6
+- Streamlit
+- Plotly
 - SoundDevice
 - SoundFile
 - Git
 - GitHub
-  
+
 
 # Project Setup
 
@@ -88,7 +97,7 @@ python3 -m venv .venv
 source .venv/bin/activate
 ```
 
-### Windows 
+### Windows
 
 ```bash
 .venv\Scripts\activate
@@ -103,6 +112,31 @@ Install all required dependencies listed in `requirements.txt`.
 pip install -r requirements.txt
 ```
 
+### Audio dependencies on Linux
+
+`sounddevice` (used by `core/audio.py` and the CLI in `core/main.py`) wraps
+the system **PortAudio** library. On Debian/Ubuntu-based systems (including
+most cloud deployment environments), install it first if you plan to use
+audio playback/recording outside the browser-based Streamlit app:
+
+```bash
+sudo apt-get install libportaudio2
+```
+
+The Streamlit app itself (`app.py`) uses the browser's own audio APIs for
+playback, upload, and microphone recording, so it does **not** require
+PortAudio to be installed to run — only the CLI / `core/audio.py` path does.
+
+
+## 6. Run the App
+
+Streamlit apps are launched with the `streamlit` command, not `python`, since Streamlit runs its own local web server and opens the app in your browser.
+
+```bash
+streamlit run app.py
+```
+
+This starts a local server (by default at `http://localhost:8501`) and opens the app automatically.
 
 
 ## Project Structure
@@ -110,17 +144,22 @@ pip install -r requirements.txt
 ```text
 Signal_Processing_Project_SP24/
 │
-├── main.py                  # Entry point of the application
-├── gui.py                   # Graphical User Interface
-├── signal_generator.py      # Signal generation algorithms
-├── analyzer.py              # FFT and STFT analysis
-├── audio.py                 # Audio playback, recording, and WAV handling
-├── utils.py                 # Helper functions
+├── app.py                    # Entry point of the application (Streamlit UI)
+├── core/
+│   ├── __init__.py
+│   ├── main.py                # Interactive CLI front end
+│   ├── signal_generator.py    # Signal generation algorithms
+│   ├── signal_specs.py        # Waveform parameter definitions
+│   ├── analyzer.py            # FFT and STFT analysis
+│   ├── filters.py             # Butterworth low/high/band-pass filters
+│   ├── audio.py                # System-audio playback, recording, WAV I/O
+│   └── utils.py                # CLI input-validation helpers
 │
+├── assets/                    # Icons, images, and logos
+├── generated/
+│   └── audio/                  # Generated/saved WAV files
 │
-├── requirements.txt         # Python dependencies
-├── README.md                # Project documentation
-└── .gitignore               # Git ignored files
+├── requirements.txt            # Python dependencies
+├── README.md                   # Project documentation
+└── .gitignore                  # Git ignored files
 ```
-
-
