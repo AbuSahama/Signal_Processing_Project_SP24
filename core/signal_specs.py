@@ -48,7 +48,6 @@ class SignalSpec:
 def _sine_build(t: FloatArray, p: dict) -> FloatArray:
     return sg.generate_sine(t, p["frequency"], p["amplitude"], p["phase"])
 
-
 def _cosine_build(t: FloatArray, p: dict) -> FloatArray:
     return sg.generate_cosine(t, p["frequency"], p["amplitude"], p["phase"])
 
@@ -71,8 +70,8 @@ def _chirp_build(t: FloatArray, p: dict) -> FloatArray:
     )
 
 
-def _noise_build(t: FloatArray, p: dict) -> FloatArray:
-    return sg.generate_noise(t, p["amplitude"], seed=p.get("seed"))
+# def _noise_build(t: FloatArray, p: dict) -> FloatArray:
+#     return sg.generate_noise(t, p["amplitude"], seed=p.get("seed"))
 
 
 SIGNAL_SPECS: dict[str, SignalSpec] = {
@@ -88,18 +87,20 @@ SIGNAL_SPECS: dict[str, SignalSpec] = {
             f"A={p['amplitude']} | Phase={p['phase']}\u00b0"
         ),
     ),
+
     "Cosine": SignalSpec(
-        name="Cosine",
-        params=[
-            ParamSpec("frequency", "Frequency (Hz)", minimum=0),
-            ParamSpec("phase", "Phase Shift (degrees)"),
-        ],
-        build=_cosine_build,
-        title=lambda p: (
-            f"Cosine Wave | f={p['frequency']} Hz | "
-            f"A={p['amplitude']} | Phase={p['phase']}\u00b0"
+            name="Cosine",
+            params=[
+                ParamSpec("frequency", "Frequency (Hz)", minimum=0),
+                ParamSpec("phase", "Phase Shift (degrees)"),
+            ],
+            build=_cosine_build,
+            title=lambda p: (
+                f"Cosine Wave | f={p['frequency']} Hz | "
+                f"A={p['amplitude']} | Phase={p['phase']}\u00b0"
+            ),
         ),
-    ),
+    
     "Square": SignalSpec(
         name="Square",
         params=[
@@ -139,12 +140,7 @@ SIGNAL_SPECS: dict[str, SignalSpec] = {
             f"f1={p['end_frequency']} Hz | T={p['duration']}s | A={p['amplitude']}"
         ),
     ),
-    "Noise": SignalSpec(
-        name="Noise",
-        params=[],
-        build=_noise_build,
-        title=lambda p: f"Gaussian Noise | A={p['amplitude']}",
-    ),
+    
 }
 
 

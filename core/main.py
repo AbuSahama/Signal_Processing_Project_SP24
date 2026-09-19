@@ -475,37 +475,6 @@ def analyze_signal(
             sample_rate,
         )
 
-# def analyze_signal(
-#     signal_data,
-#     sample_rate: int,
-# ) -> None:
-#     """Display the analysis menu and analyze the signal."""
-
-#     print()
-#     print("Analyzer Options:")
-#     print("1. FFT")
-#     print("2. STFT")
-#     print("3. Skip analyzer")
-
-#     analysis_choice = get_choice(
-#         "Enter your choice: ",
-#         ["1", "2", "3"],
-#     )
-
-#     if analysis_choice == "1":
-
-#         plot_fft(
-#             signal_data,
-#             sample_rate,
-#         )
-
-#     elif analysis_choice == "2":
-
-#         plot_stft(
-#             signal_data,
-#             sample_rate,
-#         )
-
 
 
 def save_signal(

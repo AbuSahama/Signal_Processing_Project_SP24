@@ -15,7 +15,7 @@ __all__ = [
     "create_time_vector",
     "create_sinc_time_vector",
     "generate_sine",
-    "generate_cosine",
+    "generate_cosine"
     "generate_square",
     "generate_triangle",
     "generate_sinc",
@@ -56,14 +56,12 @@ def generate_sine(
     phase_rad = np.deg2rad(phase)
     return amplitude * np.sin(2 * np.pi * frequency * t + phase_rad)
 
-
 def generate_cosine(
     t: FloatArray, frequency: float, amplitude: float, phase: float = 0
 ) -> FloatArray:
     """Generate a cosine wave. `phase` is in degrees."""
     phase_rad = np.deg2rad(phase)
     return amplitude * np.cos(2 * np.pi * frequency * t + phase_rad)
-
 
 def generate_square(
     t: FloatArray, frequency: float, amplitude: float, duty_cycle: float = 50
@@ -132,7 +130,7 @@ if __name__ == "__main__":
 
     signals = {
         "sine": generate_sine(t, frequency, amplitude),
-        "cosine": generate_cosine(t, frequency, amplitude),
+        "cosine": generate_sine(t, frequency, amplitude),
         "square": generate_square(t, frequency, amplitude),
         "triangle": generate_triangle(t, frequency, amplitude),
         "sinc": generate_sinc(t_sinc, frequency, amplitude),

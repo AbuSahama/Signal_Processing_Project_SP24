@@ -14,7 +14,6 @@ This project aims to build an interactive Python application for generating, vis
 ### Signal Generator
 
 - Sine Wave
-- Cosine Wave
 - Square Wave
 - Triangle Wave
 - Sinc Signal

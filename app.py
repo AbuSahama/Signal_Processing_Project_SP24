@@ -25,6 +25,7 @@ from core.analyzer import (
     calculate_fft_two_sided,
     calculate_stft,
 )
+from core.signal_generator import generate_noise
 
 from core.filters import (
     band_pass_filter,
@@ -289,13 +290,13 @@ with st.sidebar:
     st.write("")
 
     with st.container(border=True):
-        st.markdown("**📡 Signal Source**")
+        st.markdown("**Signal Source**")
         source = st.radio(
             "Source", ["Generate", "Upload audio (.wav)", "Record (microphone)"], horizontal=True
         )
 
         uploaded_t = uploaded_x = uploaded_title = None
-        uploaded_sample_rate = 44100.0  # fallback so the Filter section below has a nyquist to work with
+        uploaded_sample_rate = 10000.0  # fallback so the Filter section below has a nyquist to work with
 
         if source == "Generate":
             signal_name = st.selectbox("Waveform type", list(SIGNAL_SPECS.keys()))
@@ -305,11 +306,11 @@ with st.sidebar:
             with col1:
                 amplitude = st.number_input("Amplitude", value=1.0, min_value=0.0, step=0.1)
                 sample_rate = st.number_input(
-                    "Sample rate (Hz)", value=44100.0, min_value=1.0, step=100.0
+                    "Sample rate (Hz)", value=10000.0, min_value=1.0, step=100.0
                 )
             with col2:
                 duration = st.number_input("Duration (s)", value=1.0, min_value=0.001, step=0.1)
-                seed = st.number_input("Noise seed (optional)", value=42, step=1)
+                
 
             extra_params: dict = {}
             if spec.params:
@@ -322,8 +323,7 @@ with st.sidebar:
                         max_value=float(p.maximum) if p.maximum is not None else None,
                         key=f"param_{p.key}",
                     )
-            if signal_name == "Noise":
-                extra_params["seed"] = int(seed)
+            
             if signal_name == "Chirp":
                 extra_params["duration"] = duration
         else:
@@ -351,6 +351,17 @@ with st.sidebar:
                 st.caption(empty_hint)
             sample_rate = uploaded_sample_rate
 
+    st.markdown("**Add noise**")
+    add_noise = st.checkbox("Overlay noise on the generated signal")
+    noise_amplitude = 0.0
+    noise_seed = 42
+    if add_noise:
+      nc1, nc2 = st.columns(2)
+      with nc1:
+          noise_amplitude = st.number_input("Noise amplitude", value=0.1, min_value=0.0, step=0.05)
+      with nc2:
+          noise_seed = st.number_input("Noise seed", value=42, step=1)
+
     st.write("")
 
     with st.container(border=True):
@@ -361,10 +372,40 @@ with st.sidebar:
 
         nyquist = sample_rate / 2
         if filter_kind in ("low", "high"):
-            filter_params["cutoff"] = st.slider(
-                "Cutoff frequency (Hz)", 1.0, float(max(nyquist - 1, 1.0)), min(50.0, nyquist / 2)
+            # filter_params["cutoff"] = st.slider(
+            #     "Cutoff frequency (Hz)", 1.0, float(max(nyquist - 1, 1.0)), min(50.0, nyquist / 2)
+
+            # )
+            cutoff_min = 1.0
+            cutoff_max = float(max(nyquist - 1, 1.0))
+            cutoff_default = min(50.0, nyquist / 2)
+
+            st.session_state.setdefault("cutoff_val", cutoff_default)
+
+            def _sync_cutoff_from_slider():
+                st.session_state.cutoff_val = st.session_state.cutoff_slider
+
+            def _sync_cutoff_from_number():
+                st.session_state.cutoff_val = st.session_state.cutoff_number
+
+            # cc1, cc2 = st.columns([3, 2])
+            # with cc1:
+            st.slider(
+                "Cutoff frequency (Hz)", cutoff_min, cutoff_max,
+                value=st.session_state.cutoff_val, step=1.0, key="cutoff_slider",
+                on_change=_sync_cutoff_from_slider,
             )
+            # with cc2:
+            #     st.number_input(
+            #         "Exact (Hz)", min_value=cutoff_min, max_value=cutoff_max,
+            #         value=st.session_state.cutoff_val, step=1.0, key="cutoff_number",
+            #         on_change=_sync_cutoff_from_number,
+            #     )
+
+            filter_params["cutoff"] = st.session_state.cutoff_val
             filter_params["order"] = st.slider("Filter order", 1, 10, 5)
+
+
         elif filter_kind == "band":
             lo, hi = st.slider(
                 "Passband (Hz)",
@@ -381,7 +422,7 @@ with st.sidebar:
     st.write("")
 
     with st.container(border=True):
-        st.markdown("**⚙️ Display Options**")
+        st.markdown("**Display Options**")
         db_scale = st.checkbox("Show FFT magnitude in dB", value=False)
 
 
@@ -405,13 +446,28 @@ else:
     else:
         t, x, sample_rate, title = uploaded_t, uploaded_x, uploaded_sample_rate, uploaded_title
 
+# if add_noise and noise_amplitude > 0:
+#     x = x + generate_noise(t, noise_amplitude, seed=int(noise_seed))
+#     title += f" + Noise (A={noise_amplitude})"
+# if error is None and add_noise and noise_amplitude>0:
+#     x=x+generate_noise(t, noise_amplitude, seed=int(noise_seed)) 
+#     title += f" + Noise (A={noise_amplitude})"
+
+if error is None and x is not None and add_noise and noise_amplitude > 0:
+    x = x + generate_noise(
+        t,
+        noise_amplitude,
+        seed=int(noise_seed)
+    )
+    title += f" + Noise (A={noise_amplitude})"
+
 if error is None and filter_kind is not None:
     try:
         x_filtered = apply_filter(x, sample_rate, filter_kind, filter_params)
     except ValueError as exc:
         st.warning(f"Filter not applied: {exc}")
         x_filtered = None
-
+#st.image("assets/logo.png", use_container_width=True)
 st.markdown(
     f"""
     <div class="app-header">
@@ -451,7 +507,21 @@ with st.container(border=True):
 
 st.write("")
 
-tabs = st.tabs(["Time Domain", "Frequency Domain (FFT)", "Spectrogram (STFT)", "Filter Response", "Audio & Export"])
+st.markdown("""
+<style>
+div[data-baseweb="tab-list"] {
+    display: flex;
+    width: 100%;
+}
+
+button[data-baseweb="tab"] {
+    flex: 1;
+    justify-content: center;
+}
+</style>
+""", unsafe_allow_html=True)
+
+tabs = st.tabs(["Time Domain", "Frequency Domain (FFT)", "Spectrogram (STFT)", "Audio & Export"])
 
 # --- Time Domain ----------------------------------------------------------
 with tabs[0]:
@@ -578,40 +648,11 @@ with tabs[2]:
             st.plotly_chart(fig, use_container_width=True, config=PLOT_CONFIG)
             st.caption("Both panels share the same color scale, so darker/brighter areas are directly comparable.")
 
-# --- Filter Response ---------------------------------------------------------
-with tabs[3]:
-    with st.container(border=True):
-        if filter_kind is None:
-            st.info("Select a filter type in the sidebar to see its frequency response.")
-        else:
-            order = filter_params["order"]
-            if filter_kind == "band":
-                wn = [filter_params["low_cutoff"] / nyquist, filter_params["high_cutoff"] / nyquist]
-            else:
-                wn = filter_params["cutoff"] / nyquist
-            b, a = sp_signal.butter(order, wn, btype=filter_kind)
-            w, h = sp_signal.freqz(b, a, worN=2048)
-            freq_hz = w * nyquist / np.pi
-            mag_db = 20 * np.log10(np.maximum(np.abs(h), 1e-12))
 
-            fig = go.Figure()
-            fig.add_trace(go.Scatter(x=freq_hz, y=mag_db, line=dict(color=ACCENT, width=1.6)))
-            if filter_kind in ("low", "high"):
-                fig.add_vline(x=filter_params["cutoff"], line_dash="dash", line_color="#FF0000")
-            else:
-                fig.add_vline(x=filter_params["low_cutoff"], line_dash="dash", line_color="#FF0000")
-                fig.add_vline(x=filter_params["high_cutoff"], line_dash="dash", line_color="#FF5B5B")
-            fig.update_layout(
-                **PLOTLY_LAYOUT,
-                xaxis_title="Frequency (Hz)",
-                yaxis_title="Gain (dB)",
-                height=440,
-            )
-            st.plotly_chart(fig, use_container_width=True, config=PLOT_CONFIG)
-            st.caption(f"Butterworth, order {order} — dashed lines mark the cutoff frequency(ies).")
+
 
 # --- Audio & Export -----------------------------------------------------------
-with tabs[4]:
+with tabs[3]:
     ac1, ac2 = st.columns(2)
     with ac1:
         with st.container(border=True):

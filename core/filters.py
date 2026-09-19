@@ -29,7 +29,7 @@ def validate_order(order: int) -> None:
         raise ValueError("Filter order must be a positive integer")
 
 
-def validate_filtfilt_length(signal_data: FloatArray, order: int, n_sections: int = 1) -> None:
+def validate_filt_length(signal_data: FloatArray, order: int, n_sections: int = 1) -> None:
     """Ensure the signal is long enough for filtfilt's default padding.
 
     filtfilt pads the signal by roughly 3x the filter's effective length.
@@ -95,14 +95,16 @@ def low_pass_filter(
     validate_signal(signal_data)
     validate_order(order)
     validate_cutoff(cutoff_frequency, sample_rate)
-    validate_filtfilt_length(signal_data, order, n_sections=1)
+    validate_filt_length(signal_data, order, n_sections=1)
 
     nyquist = sample_rate / 2
     normalized_cutoff = cutoff_frequency / nyquist
 
-    b, a = signal.butter(order, normalized_cutoff, btype="low")
+    # b, a = signal.butter(order, normalized_cutoff, btype="low")
 
-    filtered_signal = signal.filtfilt(b, a, signal_data)
+    # filtered_signal = signal.filtfilt(b, a, signal_data)
+    sos = signal.butter(order, normalized_cutoff, btype="low", output="sos")
+    filtered_signal = signal.sosfiltfilt(sos, signal_data)
 
     return filtered_signal
 
@@ -117,14 +119,16 @@ def high_pass_filter(
     validate_signal(signal_data)
     validate_order(order)
     validate_cutoff(cutoff_frequency, sample_rate)
-    validate_filtfilt_length(signal_data, order, n_sections=1)
+    validate_filt_length(signal_data, order, n_sections=1)
 
     nyquist = sample_rate / 2
     normalized_cutoff = cutoff_frequency / nyquist
 
-    b, a = signal.butter(order, normalized_cutoff, btype="high")
+    # b, a = signal.butter(order, normalized_cutoff, btype="high")
 
-    filtered_signal = signal.filtfilt(b, a, signal_data)
+    # filtered_signal = signal.filtfilt(b, a, signal_data)
+    sos = signal.butter(order, normalized_cutoff, btype="high", output="sos")
+    filtered_signal = signal.sosfiltfilt(sos, signal_data)
 
     return filtered_signal
 
@@ -143,15 +147,17 @@ def band_pass_filter(
     validate_signal(signal_data)
     validate_order(order)
     validate_band(low_cutoff, high_cutoff, sample_rate)
-    validate_filtfilt_length(signal_data, order, n_sections=2)
+    validate_filt_length(signal_data, order, n_sections=2)
 
     nyquist = sample_rate / 2
 
     normalized_cutoffs = [low_cutoff / nyquist, high_cutoff / nyquist]
 
-    b, a = signal.butter(order, normalized_cutoffs, btype="band")
+    # b, a = signal.butter(order, normalized_cutoffs, btype="band")
 
-    filtered_signal = signal.filtfilt(b, a, signal_data)
+    # filtered_signal = signal.filtfilt(b, a, signal_data)
+    sos = signal.butter(order, normalized_cutoffs, btype="band", output="sos")
+    filtered_signal = signal.sosfiltfilt(sos, signal_data)
 
     return filtered_signal
 
