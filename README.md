@@ -137,7 +137,6 @@ Signal_Processing_Project_SP24/
 │   ├── filters.py             # Butterworth low/high/band-pass filters
 │   └──   audio.py             # System-audio playback, recording, WAV I/O    
 │
-├── assets/                    # Icons, images, and logos
 ├── generated/
 │   └── audio/                  # Generated/saved WAV files
 │
