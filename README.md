@@ -111,21 +111,6 @@ Install all required dependencies listed in `requirements.txt`.
 pip install -r requirements.txt
 ```
 
-### Audio dependencies on Linux
-
-`sounddevice` (used by `core/audio.py` and the CLI in `core/main.py`) wraps
-the system **PortAudio** library. On Debian/Ubuntu-based systems (including
-most cloud deployment environments), install it first if you plan to use
-audio playback/recording outside the browser-based Streamlit app:
-
-```bash
-sudo apt-get install libportaudio2
-```
-
-The Streamlit app itself (`app.py`) uses the browser's own audio APIs for
-playback, upload, and microphone recording, so it does **not** require
-PortAudio to be installed to run — only the CLI / `core/audio.py` path does.
-
 
 ## 6. Run the App
 
@@ -146,13 +131,11 @@ Signal_Processing_Project_SP24/
 ├── app.py                    # Entry point of the application (Streamlit UI)
 ├── core/
 │   ├── __init__.py
-│   ├── main.py                # Interactive CLI front end
 │   ├── signal_generator.py    # Signal generation algorithms
 │   ├── signal_specs.py        # Waveform parameter definitions
 │   ├── analyzer.py            # FFT and STFT analysis
 │   ├── filters.py             # Butterworth low/high/band-pass filters
-│   ├── audio.py                # System-audio playback, recording, WAV I/O
-│   └── utils.py                # CLI input-validation helpers
+│   └──   audio.py             # System-audio playback, recording, WAV I/O    
 │
 ├── assets/                    # Icons, images, and logos
 ├── generated/

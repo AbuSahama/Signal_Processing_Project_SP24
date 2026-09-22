@@ -1,10 +1,3 @@
-"""
-audio.py
-
-Save/load signals as WAV files, and play/record audio via the system's
-default audio device.
-"""
-
 from __future__ import annotations
 
 import os
@@ -17,7 +10,6 @@ from scipy.io.wavfile import read, write
 FloatArray = NDArray[np.float64]
 
 DEFAULT_AUDIO_DIR = "generated/audio"
-
 
 def save_audio(
     filename: str,

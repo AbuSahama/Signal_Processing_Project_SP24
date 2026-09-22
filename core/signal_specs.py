@@ -1,23 +1,8 @@
-"""
-signal_specs.py
-
-Single source of truth for "what does each waveform need, and how do I
-build it". Both main.py (CLI) and gui.py (GUI) import SIGNAL_SPECS
-and generate() instead of duplicating a per-waveform if/elif chain.
-
-To add a new waveform: write a *_build function, add a SignalSpec entry
-to SIGNAL_SPECS, and both front ends pick it up automatically.
-"""
-
 from __future__ import annotations
-
 from dataclasses import dataclass
 from typing import Callable, Sequence
-
 import numpy as np
 from numpy.typing import NDArray
-
-# import signal_generator as sg
 from . import signal_generator as sg
 
 FloatArray = NDArray[np.float64]
@@ -25,8 +10,6 @@ FloatArray = NDArray[np.float64]
 
 @dataclass(frozen=True)
 class ParamSpec:
-    """Describes one numeric input a waveform needs (frequency, phase, etc.)."""
-
     key: str
     label: str
     minimum: float | None = None
@@ -36,8 +19,6 @@ class ParamSpec:
 
 @dataclass(frozen=True)
 class SignalSpec:
-    """Describes one waveform type: its extra inputs, builder, and title."""
-
     name: str
     params: Sequence[ParamSpec]
     build: Callable[[FloatArray, dict], FloatArray]
@@ -68,10 +49,6 @@ def _chirp_build(t: FloatArray, p: dict) -> FloatArray:
     return sg.generate_chirp(
         t, p["start_frequency"], p["end_frequency"], p["duration"], p["amplitude"]
     )
-
-
-# def _noise_build(t: FloatArray, p: dict) -> FloatArray:
-#     return sg.generate_noise(t, p["amplitude"], seed=p.get("seed"))
 
 
 SIGNAL_SPECS: dict[str, SignalSpec] = {
@@ -143,18 +120,10 @@ SIGNAL_SPECS: dict[str, SignalSpec] = {
     
 }
 
-
 def generate(
     signal_name: str, common: dict, extra: dict
 ) -> tuple[FloatArray, FloatArray, str]:
-    """Build a signal by name.
 
-    `common` must contain amplitude, duration, sample_rate.
-    `extra` must contain the signal-specific params listed in
-    SIGNAL_SPECS[signal_name].params.
-
-    Returns (t, x, title).
-    """
     if signal_name not in SIGNAL_SPECS:
         raise KeyError(f"Unknown signal type: {signal_name!r}")
 

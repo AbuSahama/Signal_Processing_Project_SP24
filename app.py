@@ -1,17 +1,5 @@
-"""
-app.py
-
-SignalLab (signal generator and analyzer) — a Streamlit front end for the signal-processing toolkit
-(signal_generator.py / signal_specs.py / filters.py / analyzer.py).
-
-Run locally with:
-    streamlit run app.py
-"""
-
 from __future__ import annotations
-
 import io
-
 import numpy as np
 import plotly.graph_objects as go
 import streamlit as st
@@ -35,10 +23,6 @@ from core.filters import (
 
 from core.signal_specs import SIGNAL_SPECS, generate
 
-# --------------------------------------------------------------------------
-# Page setup + theme
-# --------------------------------------------------------------------------
-
 st.set_page_config(
     page_title="Signal Generator and Analyzer",
     page_icon="〰️",
@@ -46,7 +30,7 @@ st.set_page_config(
     initial_sidebar_state="expanded",
 )
 
-# Original dark palette.
+
 ACCENT = "#7C9BFF"
 ACCENT_SOFT = "rgba(124, 155, 255, 0.15)"
 COMPARE = "#FE0000"          # "filtered" trace
@@ -201,13 +185,7 @@ PLOTLY_LAYOUT = dict(
     legend=dict(orientation="h", y=1.08, x=0),
 )
 
-# Always show the modebar (camera/zoom/pan/reset/fullscreen), not just on hover.
 PLOT_CONFIG = dict(displayModeBar=True, displaylogo=False)
-
-
-# --------------------------------------------------------------------------
-# Helpers
-# --------------------------------------------------------------------------
 
 def to_wav_bytes(sig: np.ndarray, sample_rate: float) -> bytes:
     """Normalize to int16 and encode as an in-memory WAV file."""
@@ -218,7 +196,6 @@ def to_wav_bytes(sig: np.ndarray, sample_rate: float) -> bytes:
     wav_write(buf, int(sample_rate), int16_data)
     return buf.getvalue()
 
-
 def to_csv_bytes(t: np.ndarray, sig: np.ndarray) -> bytes:
     buf = io.StringIO()
     buf.write("time_s,amplitude\n")
@@ -228,15 +205,6 @@ def to_csv_bytes(t: np.ndarray, sig: np.ndarray) -> bytes:
 
 
 def read_uploaded_wav(uploaded_file) -> tuple[np.ndarray, np.ndarray, float, str]:
-    """Read an uploaded WAV file into (t, x, sample_rate, title).
-
-    Stereo files are downmixed to mono (averaged) since the rest of the
-    toolkit works on 1D signals. Amplitude is peak-normalized to [-1, 1],
-    matching audio.load_audio's convention, but reimplemented here so this
-    file doesn't need to import audio.py (which imports sounddevice at
-    module level — a dependency this app doesn't otherwise need, and one
-    that can fail to import at all on a server with no audio hardware).
-    """
     sample_rate, raw = wav_read(uploaded_file)
     raw = np.asarray(raw)
     if raw.ndim > 1:
@@ -271,11 +239,6 @@ def apply_filter(sig: np.ndarray, sample_rate: float, kind: str, params: dict) -
         )
     raise ValueError(f"Unknown filter kind: {kind}")
 
-
-# --------------------------------------------------------------------------
-# Sidebar — signal + filter controls
-# --------------------------------------------------------------------------
-
 with st.sidebar:
     st.markdown(
         """
@@ -296,7 +259,7 @@ with st.sidebar:
         )
 
         uploaded_t = uploaded_x = uploaded_title = None
-        uploaded_sample_rate = 10000.0  # fallback so the Filter section below has a nyquist to work with
+        uploaded_sample_rate = 10000.0  
 
         if source == "Generate":
             signal_name = st.selectbox("Waveform type", list(SIGNAL_SPECS.keys()))
@@ -332,11 +295,7 @@ with st.sidebar:
             if source == "Upload audio (.wav)":
                 audio_file = st.file_uploader("Choose Audio File", type=["wav"])
                 empty_hint = "Drag & drop or click to select a .wav file to analyze."
-            else:  # Record (microphone)
-                # Browser-side recording via st.audio_input — no sounddevice/system
-                # audio device involved, so this works the same locally and when
-                # deployed (unlike audio.py's record_audio, which needs a real
-                # input device on the machine running the server).
+            else:  
                 audio_file = st.audio_input("Record audio")
                 empty_hint = "Record a clip to analyze it instead of generating one."
 
@@ -425,11 +384,6 @@ with st.sidebar:
         st.markdown("**Display Options**")
         db_scale = st.checkbox("Show FFT magnitude in dB", value=False)
 
-
-# --------------------------------------------------------------------------
-# Generate (or load) + (optionally) filter the signal
-# --------------------------------------------------------------------------
-
 error = None
 t = x = title = None
 x_filtered = None
@@ -446,12 +400,6 @@ else:
     else:
         t, x, sample_rate, title = uploaded_t, uploaded_x, uploaded_sample_rate, uploaded_title
 
-# if add_noise and noise_amplitude > 0:
-#     x = x + generate_noise(t, noise_amplitude, seed=int(noise_seed))
-#     title += f" + Noise (A={noise_amplitude})"
-# if error is None and add_noise and noise_amplitude>0:
-#     x=x+generate_noise(t, noise_amplitude, seed=int(noise_seed)) 
-#     title += f" + Noise (A={noise_amplitude})"
 
 if error is None and x is not None and add_noise and noise_amplitude > 0:
     x = x + generate_noise(
@@ -467,7 +415,7 @@ if error is None and filter_kind is not None:
     except ValueError as exc:
         st.warning(f"Filter not applied: {exc}")
         x_filtered = None
-#st.image("assets/logo.png", use_container_width=True)
+
 st.markdown(
     f"""
     <div class="app-header">
@@ -494,10 +442,6 @@ def plain_stat(col, label: str, value: str) -> None:
     )
 
 
-# --------------------------------------------------------------------------
-# Stat row, in its own card
-# --------------------------------------------------------------------------
-
 with st.container(border=True):
     s1, s2, s3, s4 = st.columns(4)
     plain_stat(s1, "Samples", f"{len(active_signal):,}")
@@ -523,7 +467,6 @@ button[data-baseweb="tab"] {
 
 tabs = st.tabs(["Time Domain", "Frequency Domain (FFT)", "Spectrogram (STFT)", "Audio & Export"])
 
-# --- Time Domain ----------------------------------------------------------
 with tabs[0]:
     with st.container(border=True):
         fig = go.Figure()
@@ -535,7 +478,6 @@ with tabs[0]:
         fig.update_layout(**PLOTLY_LAYOUT, xaxis_title="Time (s)", yaxis_title="Amplitude", height=440)
         st.plotly_chart(fig, use_container_width=True, config=PLOT_CONFIG)
 
-# --- Frequency Domain -------------------------------------------------------
 with tabs[1]:
     with st.container(border=True):
         if source == "Generate" and signal_name == "Sinc":
@@ -590,7 +532,7 @@ with tabs[1]:
             fig.update_layout(**PLOTLY_LAYOUT, xaxis_title="Frequency (Hz)", yaxis_title=ylabel, height=440)
             st.plotly_chart(fig, use_container_width=True, config=PLOT_CONFIG)
 
-# --- Spectrogram ------------------------------------------------------------
+
 with tabs[2]:
     with st.container(border=True):
         if len(x) < 32:
@@ -648,10 +590,6 @@ with tabs[2]:
             st.plotly_chart(fig, use_container_width=True, config=PLOT_CONFIG)
             st.caption("Both panels share the same color scale, so darker/brighter areas are directly comparable.")
 
-
-
-
-# --- Audio & Export -----------------------------------------------------------
 with tabs[3]:
     ac1, ac2 = st.columns(2)
     with ac1:
@@ -679,8 +617,3 @@ with tabs[3]:
                 )
             else:
                 st.caption("Enable a filter in the sidebar to hear/export the filtered signal.")
-
-    st.caption(
-        "Playback uses your browser's audio, not the system audio device — this works the same "
-        "locally and when deployed (e.g. Streamlit Cloud)."
-    )

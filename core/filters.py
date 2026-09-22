@@ -1,13 +1,3 @@
-"""
-filters.py
-
-Digital Low-Pass, High-Pass, and Band-Pass filters for generated signals.
-
-Filtering calculations are kept separate from plotting so that the
-filter functions can be reused by the CLI or GUI.
-"""
-
-
 from __future__ import annotations
 import numpy as np
 import matplotlib.pyplot as plt
@@ -15,7 +5,6 @@ from numpy.typing import NDArray
 from scipy import signal
 
 FloatArray = NDArray[np.float64]
-
 
 def validate_signal(signal_data: FloatArray) -> None:
     """Validate that signal is not empty."""
@@ -30,13 +19,8 @@ def validate_order(order: int) -> None:
 
 
 def validate_filt_length(signal_data: FloatArray, order: int, n_sections: int = 1) -> None:
-    """Ensure the signal is long enough for filtfilt's default padding.
-
-    filtfilt pads the signal by roughly 3x the filter's effective length.
-    For band-pass filters, `a`/`b` arrays are twice the length of `order`
-    (n_sections=2), so we pass that in explicitly.
-    """
-    effective_len = order * n_sections * 2 + 1  # length of a/b returned by butter
+   
+    effective_len = order * n_sections * 2 + 1 
     min_len = 3 * (effective_len - 1)
     if len(signal_data) <= min_len:
         raise ValueError(
@@ -44,7 +28,6 @@ def validate_filt_length(signal_data: FloatArray, order: int, n_sections: int = 
             f"Need more than {min_len} samples, got {len(signal_data)}. "
             f"Use a shorter order or a longer signal."
         )
-
 
 def validate_cutoff(cutoff: float, sample_rate: float) -> None:
     """Validate a single cutoff frequency."""
@@ -88,8 +71,6 @@ def validate_band(low_cutoff: float, high_cutoff: float, sample_rate: float) -> 
 def low_pass_filter(
     signal_data: FloatArray, sample_rate: float, cutoff_frequency: float, order: int = 5
 ) -> FloatArray:
-    """Apply a Butterworth low-pass filter.
-    Frequencies below the cutoff are mostly preserved while frequencies above the cutoff are attenuated."""
 
     signal_data = np.asarray(signal_data, dtype=np.float64)
     validate_signal(signal_data)
@@ -100,20 +81,14 @@ def low_pass_filter(
     nyquist = sample_rate / 2
     normalized_cutoff = cutoff_frequency / nyquist
 
-    # b, a = signal.butter(order, normalized_cutoff, btype="low")
-
-    # filtered_signal = signal.filtfilt(b, a, signal_data)
     sos = signal.butter(order, normalized_cutoff, btype="low", output="sos")
     filtered_signal = signal.sosfiltfilt(sos, signal_data)
 
     return filtered_signal
 
-
 def high_pass_filter(
     signal_data: FloatArray, sample_rate: float, cutoff_frequency: float, order: int = 5
 ) -> FloatArray:
-    """Apply a Butterworth high-pass filter.
-    Frequencies below the cutoff are attenuated while frequencies above the cutoff are mostly preserved."""
 
     signal_data = np.asarray(signal_data, dtype=np.float64)
     validate_signal(signal_data)
@@ -124,14 +99,10 @@ def high_pass_filter(
     nyquist = sample_rate / 2
     normalized_cutoff = cutoff_frequency / nyquist
 
-    # b, a = signal.butter(order, normalized_cutoff, btype="high")
-
-    # filtered_signal = signal.filtfilt(b, a, signal_data)
     sos = signal.butter(order, normalized_cutoff, btype="high", output="sos")
     filtered_signal = signal.sosfiltfilt(sos, signal_data)
 
     return filtered_signal
-
 
 def band_pass_filter(
     signal_data: FloatArray,
@@ -140,8 +111,6 @@ def band_pass_filter(
     high_cutoff: float,
     order: int = 5,
 ) -> FloatArray:
-    """Apply a Butterworth band-pass filter. Frequencies between low_cutoff and high_cutoff are mostly preserved
-    while frequencies outside this range are attenuated."""
 
     signal_data = np.asarray(signal_data, dtype=np.float64)
     validate_signal(signal_data)
@@ -153,9 +122,6 @@ def band_pass_filter(
 
     normalized_cutoffs = [low_cutoff / nyquist, high_cutoff / nyquist]
 
-    # b, a = signal.butter(order, normalized_cutoffs, btype="band")
-
-    # filtered_signal = signal.filtfilt(b, a, signal_data)
     sos = signal.butter(order, normalized_cutoffs, btype="band", output="sos")
     filtered_signal = signal.sosfiltfilt(sos, signal_data)
 
@@ -165,7 +131,6 @@ def band_pass_filter(
 def plot_filter_comparison(
     original_signal: FloatArray, filtered_signal: FloatArray, sample_rate: float, title: str
 ) -> None:
-    """Plot original and filtered signals in the time domain."""
 
     time = np.arange(len(original_signal)) / sample_rate
 
