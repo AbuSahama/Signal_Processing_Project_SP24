@@ -135,7 +135,7 @@ Signal_Processing_Project_SP24/
 │   ├── signal_specs.py        # Waveform parameter definitions
 │   ├── analyzer.py            # FFT and STFT analysis
 │   ├── filters.py             # Butterworth low/high/band-pass filters
-│   └──   audio.py             # System-audio playback, recording, WAV I/O    
+│   └── audio.py             # System-audio playback, recording, WAV I/O    
 │
 ├── generated/
 │   └── audio/                  # Generated/saved WAV files
