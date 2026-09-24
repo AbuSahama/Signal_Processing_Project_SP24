@@ -41,10 +41,21 @@ BORDER = "#262C36"
 TEXT = "#F2F4F8"
 SUBTEXT = "#9AA4B2"
 
+WAVEFORM_IMAGES = {
+    "Sine": "/assests/Sine.png",
+    "Cosine": "assets/cosine.png",
+    "Square": "assets/Square.png",
+    "Triangle": "assets/Triangle.png",
+    "Sinc": "assets/Sinc.png",
+    "Chirp": "assets/Chirp.png",
+    
+}
+
 
 st.markdown(
     f"""
     <style>
+        html {{ scroll-behavior: smooth; }}
         .stApp {{ background-color: {BG}; }}
 
         h1, h2, h3 {{
@@ -171,10 +182,272 @@ st.markdown(
         hr {{
             border-color: {BORDER};
         }}
+
+        /* Landing / welcome screen */
+        .landing-wrap {{
+            max-width: 900px;
+            margin: 2rem 0 0 0;
+            padding: 0;
+        }}
+        .landing-mark {{
+            font-size: 2.2rem;
+            line-height: 1;
+            margin-bottom: 0.6rem;
+        }}
+        .landing-title {{
+            font-size: clamp(2.6rem, 6vw, 4.2rem);
+            font-weight: 800;
+            color: {TEXT};
+            letter-spacing: -0.03em;
+            line-height: 1.05;
+            margin-top: 0.4rem;
+        }}
+        .landing-subtitle {{
+            color: {SUBTEXT};
+            font-size: 1.2rem;
+            margin-top: 1.4rem;
+            line-height: 1.6;
+        }}
+        .landing-secondary-link {{
+            color: {TEXT};
+            font-size: 1.05rem;
+            text-decoration: underline;
+            text-decoration-color: {BORDER};
+            text-underline-offset: 4px;
+        }}
+        .landing-cta-btn {{
+            display: inline-block;
+            background-color: {ACCENT};
+            color: {BG} !important;
+            font-weight: 700;
+            font-size: 1.05rem;
+            padding: 0.7rem 1.8rem;
+            border-radius: 10px;
+            text-decoration: none !important;
+            transition: filter 0.15s ease;
+        }}
+        .landing-cta-btn:hover {{
+            filter: brightness(1.08);
+        }}
+        .landing-mockup {{
+            margin-top: 3rem;
+            border-radius: 16px;
+            overflow: hidden;
+            border: 1px solid {BORDER};
+            background: linear-gradient(135deg, {ACCENT_SOFT}, transparent 60%), {CARD_BG};
+        }}
+        .landing-mockup-window {{
+            margin: 1.8rem;
+            border-radius: 10px;
+            background-color: #0B0E14;
+            border: 1px solid {BORDER};
+            overflow: hidden;
+        }}
+        .landing-mockup-titlebar {{
+            display: flex;
+            align-items: center;
+            gap: 0.4rem;
+            padding: 0.6rem 0.8rem;
+            border-bottom: 1px solid {BORDER};
+        }}
+        .landing-dot {{
+            width: 11px;
+            height: 11px;
+            border-radius: 50%;
+        }}
+        .landing-mockup-filename {{
+            margin-left: 0.5rem;
+            color: {SUBTEXT};
+            font-size: 0.8rem;
+            font-family: monospace;
+        }}
+        .landing-mockup-code {{
+            padding: 1.1rem 1.3rem 1.4rem 1.3rem;
+            font-family: "SFMono-Regular", Consolas, monospace;
+            font-size: 0.92rem;
+            line-height: 1.85;
+            color: {TEXT};
+        }}
+        .landing-mockup-code .ln {{
+            color: {SUBTEXT};
+            display: inline-block;
+            width: 1.4rem;
+        }}
+        .landing-mockup-code .kw {{ color: {ACCENT}; }}
+        .landing-mockup-code .fn {{ color: {ORIGINAL_TRACE}; }}
+        .landing-mockup-code .str {{ color: #FFC86B; }}
+
+        /* Top bar (logo + github link) */
+        .topbar-row {{
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0.4rem 0 0.2rem 0;
+        }}
+        .topbar-logo-text {{
+            color: {TEXT};
+            font-size: 1.05rem;
+            font-weight: 700;
+        }}
+        .topbar-github {{
+            display: flex;
+            justify-content: flex-end;
+        }}
+        .topbar-github a {{
+            display: inline-flex;
+            align-items: center;
+            color: {SUBTEXT};
+            transition: color 0.15s ease;
+        }}
+        .topbar-github a:hover {{
+            color: {TEXT};
+        }}
+
+        div[data-testid="stButton"] button[kind="primary"] {{
+            background-color: {ACCENT} !important;
+            border-color: {ACCENT} !important;
+            color: {BG} !important;
+            font-weight: 700;
+            font-size: 1.05rem;
+            padding: 0.7rem 0;
+        }}
+        div[data-testid="stButton"] button[kind="primary"]:hover {{
+            filter: brightness(1.08);
+        }}
     </style>
     """,
     unsafe_allow_html=True,
 )
+
+
+GITHUB_URL = "https://github.com/your-username/your-repo"
+
+
+def render_topbar() -> None:
+    """Top bar: GitHub link on the right (shown once at the top of the page)."""
+    left, right = st.columns([8, 1])
+    with left:
+        st.markdown('<a id="top"></a>', unsafe_allow_html=True)
+    with right:
+        st.markdown(
+            f"""
+            <div class="topbar-github">
+                <a href="{GITHUB_URL}" target="_blank" rel="noopener noreferrer" title="View on GitHub">
+                    <svg height="22" width="22" viewBox="0 0 16 16" fill="currentColor">
+                        <path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38
+                        0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13
+                        -.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07
+                        -1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82
+                        .64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12
+                        .51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48
+                        0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.01 8.01 0 0 0 16 8c0-4.42-3.58-8-8-8z"/>
+                    </svg>
+                </a>
+            </div>
+            """,
+            unsafe_allow_html=True,
+        )
+
+
+render_topbar()
+st.markdown(
+    f"""
+    <div class="landing-wrap">
+       <div class="landing-title"><span style="color:{ACCENT};">ES Signals Project</span><br>Signal Generator and Analyzer</div>
+        <div class="landing-subtitle">
+            Team Members: Abu Sahama (24f3100239),  Sonali (24f3100339),  Rajiv Ratan (24F1100039)
+        </div>
+        <div style="margin-top: 1.8rem; display: flex; align-items: center; gap: 1.6rem; flex-wrap: wrap;">
+            <a href="#dashboard" class="landing-cta-btn">Get started</a>
+            <span class="landing-secondary-link">Signals · FFT · Spectrogram (STFT) · Filters</span>
+        </div>
+    </div>
+    """,
+    unsafe_allow_html=True,
+)
+
+st.markdown(
+    f"""
+    <div class="landing-wrap">
+        <div class="landing-mockup">
+            <div class="landing-mockup-window">
+                <div class="landing-mockup-titlebar">
+                    <span class="landing-dot" style="background:#FF5F56;"></span>
+                    <span class="landing-dot" style="background:#FFBD2E;"></span>
+                    <span class="landing-dot" style="background:#27C93F;"></span>
+                    <span class="landing-mockup-filename">Project's Basic Pseudo Code</span>
+                </div>
+                <div class="landing-mockup-code">
+                    <div>
+                        <span class="ln">1</span>
+                        <span class="kw">BEGIN</span>
+                    </div>
+                    <div>
+                        <span class="ln">2</span>
+                        <span class="kw">SELECT</span> signal source
+                    </div>
+                    <div>
+                        <span class="ln">3</span>
+                        <span class="fn">GENERATE</span> /
+                        <span class="fn">UPLOAD</span> /
+                        <span class="fn">RECORD</span> signal
+                    </div>
+                    <div>
+                        <span class="ln">4</span>
+                        <span class="fn">ADD</span> optional noise
+                    </div>
+                    <div>
+                        <span class="ln">5</span>
+                        <span class="kw">ANALYZE</span>
+                        <span style="color:{SUBTEXT};">
+                            # Time Domain · FFT · STFT
+                        </span>
+                    </div>
+                    <div>
+                        <span class="ln">6</span>
+                        &nbsp;&nbsp;Time Domain →
+                        <span class="fn">FFT</span> →
+                        <span class="fn">STFT</span>
+                    </div>
+                    <div>
+                        <span class="ln">7</span>
+                        <span class="kw">IF</span> filtering is enabled
+                        <span class="kw">THEN</span>
+                    </div>
+                    <div>
+                        <span class="ln">8</span>
+                        &nbsp;&nbsp;<span class="fn">Butterworth</span>
+                        <span class="str">LPF / HPF / BPF</span>
+                    </div>
+                    <div>
+                        <span class="ln">9</span>
+                        &nbsp;&nbsp;<span class="fn">SOS</span> zero-phase filtering
+                    </div>
+                    <div>
+                        <span class="ln">10</span>
+                        <span class="fn">COMPARE</span>
+                        original vs filtered
+                    </div>
+                    <div>
+                        <span class="ln">11</span>
+                        <span class="fn">PLAY</span> /
+                        <span class="fn">EXPORT</span>
+                        <span class="str">WAV / CSV</span>
+                    </div>
+                    <div>
+                        <span class="ln">12</span>
+                        <span class="kw">END</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <a id="dashboard"></a>
+    """,
+    unsafe_allow_html=True,
+)
+
+
 
 PLOTLY_LAYOUT = dict(
     template="plotly_dark",
@@ -259,7 +532,7 @@ with st.sidebar:
         )
 
         uploaded_t = uploaded_x = uploaded_title = None
-        uploaded_sample_rate = 10000.0  
+        uploaded_sample_rate = 44100.0  
 
         if source == "Generate":
             signal_name = st.selectbox("Waveform type", list(SIGNAL_SPECS.keys()))
@@ -269,7 +542,7 @@ with st.sidebar:
             with col1:
                 amplitude = st.number_input("Amplitude", value=1.0, min_value=0.0, step=0.1)
                 sample_rate = st.number_input(
-                    "Sample rate (Hz)", value=10000.0, min_value=1.0, step=100.0
+                    "Sample rate (Hz)", value=44100.0, min_value=1.0, step=100.0
                 )
             with col2:
                 duration = st.number_input("Duration (s)", value=1.0, min_value=0.001, step=0.1)
@@ -331,10 +604,6 @@ with st.sidebar:
 
         nyquist = sample_rate / 2
         if filter_kind in ("low", "high"):
-            # filter_params["cutoff"] = st.slider(
-            #     "Cutoff frequency (Hz)", 1.0, float(max(nyquist - 1, 1.0)), min(50.0, nyquist / 2)
-
-            # )
             cutoff_min = 1.0
             cutoff_max = float(max(nyquist - 1, 1.0))
             cutoff_default = min(50.0, nyquist / 2)
@@ -347,19 +616,11 @@ with st.sidebar:
             def _sync_cutoff_from_number():
                 st.session_state.cutoff_val = st.session_state.cutoff_number
 
-            # cc1, cc2 = st.columns([3, 2])
-            # with cc1:
             st.slider(
                 "Cutoff frequency (Hz)", cutoff_min, cutoff_max,
                 value=st.session_state.cutoff_val, step=1.0, key="cutoff_slider",
                 on_change=_sync_cutoff_from_slider,
             )
-            # with cc2:
-            #     st.number_input(
-            #         "Exact (Hz)", min_value=cutoff_min, max_value=cutoff_max,
-            #         value=st.session_state.cutoff_val, step=1.0, key="cutoff_number",
-            #         on_change=_sync_cutoff_from_number,
-            #     )
 
             filter_params["cutoff"] = st.session_state.cutoff_val
             filter_params["order"] = st.slider("Filter order", 1, 10, 5)
@@ -419,9 +680,12 @@ if error is None and filter_kind is not None:
 st.markdown(
     f"""
     <div class="app-header">
-        <div class="app-title">Signal Generator and Analyzer</div>
+        <div class="app-title">Generate and Analyze</div>
         <div class="app-subtitle">{title if title else "Configure a signal in the sidebar to get started"}</div>
         <div class="app-badge">〰️ Waveform · Filter · Spectral analysis</div>
+        <div style="margin-top: 0.6rem;">
+            <a href="#top" style="color:{SUBTEXT}; font-size: 0.85rem; text-decoration: none;">&uarr; Back to top</a>
+        </div>
     </div>
     """,
     unsafe_allow_html=True,
@@ -549,9 +813,6 @@ with tabs[2]:
             )
             st.plotly_chart(fig, use_container_width=True, config=PLOT_CONFIG)
         else:
-            # Side-by-side original vs. filtered, on a shared color scale so the
-            # comparison is apples-to-apples rather than each panel auto-scaling
-            # to its own max.
             f_o, t_o, mag_o = calculate_stft(x, sample_rate)
             f_f, t_f, mag_f = calculate_stft(x_filtered, sample_rate)
             shared_max = max(mag_o.max(), mag_f.max())
