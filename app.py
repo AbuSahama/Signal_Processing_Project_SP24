@@ -320,7 +320,7 @@ st.markdown(
 )
 
 
-GITHUB_URL = "https://github.com/your-username/your-repo"
+GITHUB_URL = "https://github.com/AbuSahama/Signal_Processing_Project_SP24"
 
 
 def render_topbar() -> None:
