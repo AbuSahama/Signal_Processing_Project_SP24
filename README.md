@@ -1,5 +1,3 @@
-# Signal Generator and Analyzer
-
 **Signal Processing Project (SP24)**
 
 A Python-based application for generating, visualizing, playing, recording, and analyzing audio signals — built as an interactive web app with Streamlit.
@@ -14,6 +12,7 @@ This project aims to build an interactive Python application for generating, vis
 ### Signal Generator
 
 - Sine Wave
+- Cosine Wave
 - Square Wave
 - Triangle Wave
 - Sinc Signal
@@ -40,7 +39,6 @@ This project aims to build an interactive Python application for generating, vis
 
 - Butterworth Low-Pass, High-Pass, and Band-Pass filters
 - Adjustable cutoff frequency/frequencies and filter order
-- Filter frequency-response (Bode-style) view
 
 ### Signal Analysis
 
@@ -54,7 +52,6 @@ This project aims to build an interactive Python application for generating, vis
 - Python
 - NumPy
 - SciPy
-- Matplotlib
 - Streamlit
 - Plotly
 - SoundDevice
@@ -135,10 +132,12 @@ Signal_Processing_Project_SP24/
 │   ├── signal_specs.py        # Waveform parameter definitions
 │   ├── analyzer.py            # FFT and STFT analysis
 │   ├── filters.py             # Butterworth low/high/band-pass filters
-│   └── audio.py             # System-audio playback, recording, WAV I/O    
+│   └── audio.py               # System-audio playback, recording, WAV I/O    
 │
 ├── generated/
 │   └── audio/                  # Generated/saved WAV files
+├── assets/
+│   └── logo.png                # Aplication logo for browser tab
 │
 ├── requirements.txt            # Python dependencies
 ├── README.md                   # Project documentation

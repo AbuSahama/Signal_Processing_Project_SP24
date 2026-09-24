@@ -6,7 +6,6 @@ import streamlit as st
 from plotly.subplots import make_subplots
 from scipy.io.wavfile import read as wav_read
 from scipy.io.wavfile import write as wav_write
-from scipy import signal as sp_signal
 
 from core.analyzer import (
     calculate_fft,
@@ -25,37 +24,32 @@ from core.signal_specs import SIGNAL_SPECS, generate
 
 st.set_page_config(
     page_title="Signal Generator and Analyzer",
-    page_icon="〰️",
+    page_icon="/Users/abusahama/Signal_Processing_Project_SP24/assests/logo.png",
     layout="wide",
     initial_sidebar_state="expanded",
 )
 
 
+
+# Theme constants — single source of truth for every color used in the CSS
+
+
 ACCENT = "#7C9BFF"
 ACCENT_SOFT = "rgba(124, 155, 255, 0.15)"
-COMPARE = "#FE0000"          # "filtered" trace
-ORIGINAL_TRACE = "#0EFF01"   # "original" trace 
+COMPARE = "#FE0000"          # "filtered" trace color
+ORIGINAL_TRACE = "#0EFF01"   # "original" trace color
 BG = "#0E1117"
 CARD_BG = "#161B22"
 BORDER = "#262C36"
 TEXT = "#F2F4F8"
 SUBTEXT = "#9AA4B2"
 
-WAVEFORM_IMAGES = {
-    "Sine": "/assests/Sine.png",
-    "Cosine": "assets/cosine.png",
-    "Square": "assets/Square.png",
-    "Triangle": "assets/Triangle.png",
-    "Sinc": "assets/Sinc.png",
-    "Chirp": "assets/Chirp.png",
-    
-}
 
 
 st.markdown(
     f"""
     <style>
-        html {{ scroll-behavior: smooth; }}
+        html {{ scroll-behavior: smooth; }}  /* smooth-scrolls the #dashboard anchor jump */
         .stApp {{ background-color: {BG}; }}
 
         h1, h2, h3 {{
@@ -63,7 +57,7 @@ st.markdown(
             font-weight: 800 !important;
         }}
 
-        /* Header block */
+        /* Header block (dashboard title above the tabs) */
         .app-header {{
             text-align: center;
             padding: 0.5rem 0 1.5rem 0;
@@ -90,7 +84,7 @@ st.markdown(
             font-weight: 600;
         }}
 
-        /* Stat tiles */
+        /* Stat tiles (Samples / Sample rate / Peak / RMS) */
         .plain-stat-label {{
             color: {SUBTEXT};
             font-size: 0.9rem;
@@ -132,13 +126,19 @@ st.markdown(
             color: {TEXT};
         }}
 
-        /* Tabs */
+        /* Tabs (Time Domain / FFT / STFT / Export) */
         .stTabs [data-baseweb="tab-list"] {{
+            display: flex;
+            width: 100%;
             gap: 1.5rem;
         }}
         .stTabs [data-baseweb="tab"] {{
             color: {SUBTEXT};
             font-weight: 600;
+        }}
+        .stTabs button[data-baseweb="tab"] {{
+            flex: 1;
+            justify-content: center;
         }}
         .stTabs [aria-selected="true"] {{
             color: {ACCENT} !important;
@@ -183,16 +183,11 @@ st.markdown(
             border-color: {BORDER};
         }}
 
-        /* Landing / welcome screen */
+        /* ---------------- Landing / welcome hero ---------------- */
         .landing-wrap {{
             max-width: 900px;
             margin: 2rem 0 0 0;
             padding: 0;
-        }}
-        .landing-mark {{
-            font-size: 2.2rem;
-            line-height: 1;
-            margin-bottom: 0.6rem;
         }}
         .landing-title {{
             font-size: clamp(2.6rem, 6vw, 4.2rem);
@@ -229,6 +224,8 @@ st.markdown(
         .landing-cta-btn:hover {{
             filter: brightness(1.08);
         }}
+
+        /* Pseudocode / code-editor style mockup card under the hero */
         .landing-mockup {{
             margin-top: 3rem;
             border-radius: 16px;
@@ -277,18 +274,7 @@ st.markdown(
         .landing-mockup-code .fn {{ color: {ORIGINAL_TRACE}; }}
         .landing-mockup-code .str {{ color: #FFC86B; }}
 
-        /* Top bar (logo + github link) */
-        .topbar-row {{
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            padding: 0.4rem 0 0.2rem 0;
-        }}
-        .topbar-logo-text {{
-            color: {TEXT};
-            font-size: 1.05rem;
-            font-weight: 700;
-        }}
+        /* Top bar (GitHub link, top-of-page anchor target) */
         .topbar-github {{
             display: flex;
             justify-content: flex-end;
@@ -324,7 +310,9 @@ GITHUB_URL = "https://github.com/AbuSahama/Signal_Processing_Project_SP24"
 
 
 def render_topbar() -> None:
-    """Top bar: GitHub link on the right (shown once at the top of the page)."""
+    """Top bar shown once at the very top of the page: an invisible
+    `#top` anchor (used by the dashboard's "Back to top" link) on the
+    left, and the GitHub repo link on the right."""
     left, right = st.columns([8, 1])
     with left:
         st.markdown('<a id="top"></a>', unsafe_allow_html=True)
@@ -349,6 +337,7 @@ def render_topbar() -> None:
         )
 
 
+
 render_topbar()
 st.markdown(
     f"""
@@ -365,6 +354,8 @@ st.markdown(
     """,
     unsafe_allow_html=True,
 )
+
+# Pseudocode mockup card: a fake "code editor" summarizing the app's logic,
 
 st.markdown(
     f"""
@@ -449,6 +440,8 @@ st.markdown(
 
 
 
+# Shared Plotly layout/config for every chart in the dashboard below.
+
 PLOTLY_LAYOUT = dict(
     template="plotly_dark",
     paper_bgcolor=CARD_BG,
@@ -460,8 +453,9 @@ PLOTLY_LAYOUT = dict(
 
 PLOT_CONFIG = dict(displayModeBar=True, displaylogo=False)
 
+
 def to_wav_bytes(sig: np.ndarray, sample_rate: float) -> bytes:
-    """Normalize to int16 and encode as an in-memory WAV file."""
+    """Normalize a signal to int16 range and encode it as an in-memory WAV file."""
     peak = np.max(np.abs(sig))
     normalized = sig / peak if peak > 0 else sig
     int16_data = np.int16(normalized * 32767)
@@ -469,7 +463,9 @@ def to_wav_bytes(sig: np.ndarray, sample_rate: float) -> bytes:
     wav_write(buf, int(sample_rate), int16_data)
     return buf.getvalue()
 
+
 def to_csv_bytes(t: np.ndarray, sig: np.ndarray) -> bytes:
+    """Encode a (time, amplitude) pair as a downloadable CSV file."""
     buf = io.StringIO()
     buf.write("time_s,amplitude\n")
     for ti, xi in zip(t, sig):
@@ -478,10 +474,11 @@ def to_csv_bytes(t: np.ndarray, sig: np.ndarray) -> bytes:
 
 
 def read_uploaded_wav(uploaded_file) -> tuple[np.ndarray, np.ndarray, float, str]:
+    """Read an uploaded .wav file, downmix to mono, and normalize to [-1, 1]."""
     sample_rate, raw = wav_read(uploaded_file)
     raw = np.asarray(raw)
     if raw.ndim > 1:
-        raw = raw.mean(axis=1)
+        raw = raw.mean(axis=1)  
     raw = raw.astype(np.float64)
 
     peak = np.max(np.abs(raw))
@@ -493,6 +490,7 @@ def read_uploaded_wav(uploaded_file) -> tuple[np.ndarray, np.ndarray, float, str
     return t, x, float(sample_rate), title
 
 
+
 FILTER_LABELS = {
     "None": None,
     "Low-Pass": "low",
@@ -502,6 +500,7 @@ FILTER_LABELS = {
 
 
 def apply_filter(sig: np.ndarray, sample_rate: float, kind: str, params: dict) -> np.ndarray:
+    """Dispatch to the matching Butterworth filter in core.filters."""
     if kind == "low":
         return low_pass_filter(sig, sample_rate, params["cutoff"], params["order"])
     if kind == "high":
@@ -511,6 +510,10 @@ def apply_filter(sig: np.ndarray, sample_rate: float, kind: str, params: dict) -
             sig, sample_rate, params["low_cutoff"], params["high_cutoff"], params["order"]
         )
     raise ValueError(f"Unknown filter kind: {kind}")
+
+
+
+# Sidebar — signal source, noise, filter and display controls.
 
 with st.sidebar:
     st.markdown(
@@ -532,7 +535,7 @@ with st.sidebar:
         )
 
         uploaded_t = uploaded_x = uploaded_title = None
-        uploaded_sample_rate = 44100.0  
+        uploaded_sample_rate = 44100.0
 
         if source == "Generate":
             signal_name = st.selectbox("Waveform type", list(SIGNAL_SPECS.keys()))
@@ -546,7 +549,6 @@ with st.sidebar:
                 )
             with col2:
                 duration = st.number_input("Duration (s)", value=1.0, min_value=0.001, step=0.1)
-                
 
             extra_params: dict = {}
             if spec.params:
@@ -559,7 +561,7 @@ with st.sidebar:
                         max_value=float(p.maximum) if p.maximum is not None else None,
                         key=f"param_{p.key}",
                     )
-            
+
             if signal_name == "Chirp":
                 extra_params["duration"] = duration
         else:
@@ -568,7 +570,7 @@ with st.sidebar:
             if source == "Upload audio (.wav)":
                 audio_file = st.file_uploader("Choose Audio File", type=["wav"])
                 empty_hint = "Drag & drop or click to select a .wav file to analyze."
-            else:  
+            else:
                 audio_file = st.audio_input("Record audio")
                 empty_hint = "Record a clip to analyze it instead of generating one."
 
@@ -588,11 +590,11 @@ with st.sidebar:
     noise_amplitude = 0.0
     noise_seed = 42
     if add_noise:
-      nc1, nc2 = st.columns(2)
-      with nc1:
-          noise_amplitude = st.number_input("Noise amplitude", value=0.1, min_value=0.0, step=0.05)
-      with nc2:
-          noise_seed = st.number_input("Noise seed", value=42, step=1)
+        nc1, nc2 = st.columns(2)
+        with nc1:
+            noise_amplitude = st.number_input("Noise amplitude", value=0.1, min_value=0.0, step=0.05)
+        with nc2:
+            noise_seed = st.number_input("Noise seed", value=42, step=1)
 
     st.write("")
 
@@ -608,13 +610,11 @@ with st.sidebar:
             cutoff_max = float(max(nyquist - 1, 1.0))
             cutoff_default = min(50.0, nyquist / 2)
 
+            
             st.session_state.setdefault("cutoff_val", cutoff_default)
 
             def _sync_cutoff_from_slider():
                 st.session_state.cutoff_val = st.session_state.cutoff_slider
-
-            def _sync_cutoff_from_number():
-                st.session_state.cutoff_val = st.session_state.cutoff_number
 
             st.slider(
                 "Cutoff frequency (Hz)", cutoff_min, cutoff_max,
@@ -624,7 +624,6 @@ with st.sidebar:
 
             filter_params["cutoff"] = st.session_state.cutoff_val
             filter_params["order"] = st.slider("Filter order", 1, 10, 5)
-
 
         elif filter_kind == "band":
             lo, hi = st.slider(
@@ -645,6 +644,11 @@ with st.sidebar:
         st.markdown("**Display Options**")
         db_scale = st.checkbox("Show FFT magnitude in dB", value=False)
 
+
+
+# Build the active signal: generate / load it, optionally add noise, then
+# optionally run it through the selected filter.
+
 error = None
 t = x = title = None
 x_filtered = None
@@ -661,13 +665,8 @@ else:
     else:
         t, x, sample_rate, title = uploaded_t, uploaded_x, uploaded_sample_rate, uploaded_title
 
-
 if error is None and x is not None and add_noise and noise_amplitude > 0:
-    x = x + generate_noise(
-        t,
-        noise_amplitude,
-        seed=int(noise_seed)
-    )
+    x = x + generate_noise(t, noise_amplitude, seed=int(noise_seed))
     title += f" + Noise (A={noise_amplitude})"
 
 if error is None and filter_kind is not None:
@@ -676,6 +675,9 @@ if error is None and filter_kind is not None:
     except ValueError as exc:
         st.warning(f"Filter not applied: {exc}")
         x_filtered = None
+
+
+# Dashboard header (sits right below the #dashboard anchor the hero links to)
 
 st.markdown(
     f"""
@@ -699,6 +701,7 @@ active_signal = x_filtered if x_filtered is not None else x
 
 
 def plain_stat(col, label: str, value: str) -> None:
+    """Render a single label/value stat tile inside the given column."""
     col.markdown(
         f'<div class="plain-stat-label">{label}</div>'
         f'<div class="plain-stat-value">{value}</div>',
@@ -715,22 +718,9 @@ with st.container(border=True):
 
 st.write("")
 
-st.markdown("""
-<style>
-div[data-baseweb="tab-list"] {
-    display: flex;
-    width: 100%;
-}
-
-button[data-baseweb="tab"] {
-    flex: 1;
-    justify-content: center;
-}
-</style>
-""", unsafe_allow_html=True)
-
 tabs = st.tabs(["Time Domain", "Frequency Domain (FFT)", "Spectrogram (STFT)", "Audio & Export"])
 
+#  Time Domain 
 with tabs[0]:
     with st.container(border=True):
         fig = go.Figure()
@@ -742,15 +732,12 @@ with tabs[0]:
         fig.update_layout(**PLOTLY_LAYOUT, xaxis_title="Time (s)", yaxis_title="Amplitude", height=440)
         st.plotly_chart(fig, use_container_width=True, config=PLOT_CONFIG)
 
+#  Frequency Domain (FFT) 
 with tabs[1]:
     with st.container(border=True):
+
         if source == "Generate" and signal_name == "Sinc":
-            st.caption(
-                "Sinc's Fourier transform is a rectangle centered on 0 Hz. The usual "
-                "single-sided view only shows the right half of that rectangle, which "
-                "can look like it starts at 0 Hz rather than being centered on it — so "
-                "this tab shows the full two-sided spectrum instead, just for Sinc."
-            )
+            
             freqs, mag = calculate_fft_two_sided(x, sample_rate)
             y = mag
             ylabel = "Magnitude"
@@ -793,10 +780,10 @@ with tabs[1]:
                     go.Scatter(x=freqs_f, y=yf, name="Filtered", line=dict(color=COMPARE, width=1.2))
                 )
 
-            fig.update_layout(**PLOTLY_LAYOUT, xaxis_title="Frequency (Hz)", yaxis_title=ylabel, height=440)
+            fig.update_layout(**PLOTLY_LAYOUT, xaxis_title="Frequency (Hz)", yaxis_title=ylabel, height=440,)
             st.plotly_chart(fig, use_container_width=True, config=PLOT_CONFIG)
 
-
+#  Spectrogram (STFT) 
 with tabs[2]:
     with st.container(border=True):
         if len(x) < 32:
@@ -813,6 +800,7 @@ with tabs[2]:
             )
             st.plotly_chart(fig, use_container_width=True, config=PLOT_CONFIG)
         else:
+            
             f_o, t_o, mag_o = calculate_stft(x, sample_rate)
             f_f, t_f, mag_f = calculate_stft(x_filtered, sample_rate)
             shared_max = max(mag_o.max(), mag_f.max())
@@ -849,8 +837,9 @@ with tabs[2]:
             fig.update_yaxes(title_text="Frequency (Hz)", row=1, col=1)
             fig.update_layout(**PLOTLY_LAYOUT, height=440, showlegend=False)
             st.plotly_chart(fig, use_container_width=True, config=PLOT_CONFIG)
-            st.caption("Both panels share the same color scale, so darker/brighter areas are directly comparable.")
+            
 
+#  Audio & Export
 with tabs[3]:
     ac1, ac2 = st.columns(2)
     with ac1:
