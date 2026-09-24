@@ -5,7 +5,7 @@ A Python-based application for generating, visualizing, playing, recording, and 
 
 ## Objective
 
-This project aims to build an interactive Python application for generating, visualizing, and analyzing audio signals.
+This project aims to develop an interactive Python-based application for generating, visualizing, and analyzing audio signals. It provides tools for signal generation, FFT-based frequency-domain analysis, STFT-based time-frequency analysis, and digital filtering, allowing users to observe and compare signals in both the time and frequency domains.
 
 ## Features
 
@@ -17,7 +17,6 @@ This project aims to build an interactive Python application for generating, vis
 - Triangle Wave
 - Sinc Signal
 - Chirp Signal
-- Noise Signal
 
 ### Signal Controls
 
