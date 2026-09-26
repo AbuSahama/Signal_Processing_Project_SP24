@@ -190,7 +190,7 @@ st.markdown(
             padding: 0;
         }}
         .landing-title {{
-            font-size: clamp(2.6rem, 6vw, 4.2rem);
+            font-size: clamp(2.0rem, 4.0vw, 3.0rem);
             font-weight: 800;
             color: {TEXT};
             letter-spacing: -0.03em;
@@ -344,7 +344,7 @@ st.markdown(
     <div class="landing-wrap">
        <div class="landing-title"><span style="color:{ACCENT};">ES Signals Project</span><br>Signal Generator and Analyzer</div>
         <div class="landing-subtitle">
-            Team Members: Abu Sahama (24f3100239),  Sonali (24f3100339),  Rajiv Ratan (24F1100039)
+            Team Members: Abu Sahama (24f3100239),  Rajiv Ratan (24F1100039),  Sonali (24f2100339)
         </div>
         <div style="margin-top: 1.8rem; display: flex; align-items: center; gap: 1.6rem; flex-wrap: wrap;">
             <a href="#dashboard" class="landing-cta-btn">Get started</a>
@@ -363,9 +363,6 @@ st.markdown(
         <div class="landing-mockup">
             <div class="landing-mockup-window">
                 <div class="landing-mockup-titlebar">
-                    <span class="landing-dot" style="background:#FF5F56;"></span>
-                    <span class="landing-dot" style="background:#FFBD2E;"></span>
-                    <span class="landing-dot" style="background:#27C93F;"></span>
                     <span class="landing-mockup-filename">Project's Basic Pseudo Code</span>
                 </div>
                 <div class="landing-mockup-code">
@@ -391,7 +388,6 @@ st.markdown(
                         <span class="ln">5</span>
                         <span class="kw">ANALYZE</span>
                         <span style="color:{SUBTEXT};">
-                            # Time Domain · FFT · STFT
                         </span>
                     </div>
                     <div>
