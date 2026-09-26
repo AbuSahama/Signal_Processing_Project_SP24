@@ -51,10 +51,9 @@ This project aims to develop an interactive application for generating, visualiz
 - SciPy
 - Streamlit
 - Plotly
-- Matplotlib *(used only by optional local/CLI preview helpers in `core/`, not by the web app itself)*
+- Matplotlib *(used mainly for visualization in the CLI application through main.py)*
 - Git / GitHub
 
-> `sounddevice` and `soundfile` are **optional, local-only** extras (see `requirements-dev.txt`) for testing `core/audio.py`'s system-microphone helpers on your own machine. They are not required to run or deploy the web app, and most cloud hosts don't support them anyway since they need a real audio device.
 
 ## Project Structure
 
@@ -85,7 +84,7 @@ Signal_Processing_Project_SP24/
 ## Running Locally
 
 
-## Check Python Version
+### Check Python Version
 Make sure Python 3.12 is installed and being used before setting up the project.
 
 Check your Python version:
