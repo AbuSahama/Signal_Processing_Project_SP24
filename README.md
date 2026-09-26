@@ -85,17 +85,18 @@ Signal_Processing_Project_SP24/
 
 
 ### Check Python Version
-Make sure Python 3.12 is installed and being used before setting up the project.
 
-Check your Python version:
+  Make sure Python 3.12 is installed and being used before setting up the project.
 
-python3 --version
+  Check your Python version:
 
-It should show:
+  python3 --version
 
-Python 3.12.x
+  It should show:
 
-If python3 points to another version, use the Python 3.12 executable explicitly when creating the virtual environment.
+  Python 3.12.x
+
+  If python3 points to another version, use the Python 3.12 executable explicitly when creating the virtual environment.
 
 ### 1. Clone the Repository
 
