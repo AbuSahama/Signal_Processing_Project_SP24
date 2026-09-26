@@ -344,7 +344,7 @@ st.markdown(
     <div class="landing-wrap">
        <div class="landing-title"><span style="color:{ACCENT};">ES Signals Project</span><br>Signal Generator and Analyzer</div>
         <div class="landing-subtitle">
-            Team Members: Abu Sahama (24f3100239),  Rajiv Ratan (24F1100039),  Sonali (24f2100339)
+            Team Members: Abu Sahama (24f3100239),  Rajiv Ratan (24f1100039),  Sonali (24f2100339)
         </div>
         <div style="margin-top: 1.8rem; display: flex; align-items: center; gap: 1.6rem; flex-wrap: wrap;">
             <a href="#dashboard" class="landing-cta-btn">Get started</a>
