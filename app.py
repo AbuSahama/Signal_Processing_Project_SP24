@@ -338,7 +338,7 @@ GITHUB_URL = "https://github.com/AbuSahama/Signal_Processing_Project_SP24"
 
 
 
-render_topbar()
+# render_topbar()
 st.markdown(
     f"""
     <div class="landing-wrap">
