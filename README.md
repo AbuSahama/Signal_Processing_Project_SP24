@@ -1,6 +1,6 @@
 **Signal Processing Project (SP24)**
 
-A Python-based application for generating, visualizing, playing, recording, and analyzing audio signals — built as an interactive web app with Streamlit.
+A application for generating, visualizing, playing, recording, and analyzing audio signals — built as an interactive web app with Streamlit.
 
 ## Objective
 
